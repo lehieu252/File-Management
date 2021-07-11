@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/mainFolderFragment">
+
+    <fragment
+        android:id="@+id/mainFolderFragment"
+        android:name="com.example.filemanager.views.MainFolderFragment"
+        tools:layout="@layout/fragment_main_folder"
+        android:label="MainFolderFragment" >
+        <action
+            android:id="@+id/action_mainFolderFragment_to_subFolderFragment"
+            app:destination="@id/subFolderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/subFolderFragment"
+        android:name="com.example.filemanager.views.SubFolderFragment"
+        android:label="fragment_sub_folder"
+        tools:layout="@layout/fragment_sub_folder" >
+        <action
+            android:id="@+id/action_subFolderFragment_self"
+            app:destination="@id/subFolderFragment" />
+    </fragment>
+</navigation>

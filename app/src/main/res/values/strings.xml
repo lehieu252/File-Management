@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FileManager</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_file">MY FILE</string>
+    <string name="no_files">No files</string>
+    <string name="move">Move</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+</resources>
