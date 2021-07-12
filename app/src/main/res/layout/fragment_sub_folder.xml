@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -11,7 +11,7 @@
         <RelativeLayout
             android:id="@+id/top_bar"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="51dp"
             android:background="@drawable/top_bar_background">
 
             <TextView
@@ -53,14 +53,68 @@
             android:id="@+id/bottom_option_menu"
             style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="51dp"
             android:layout_alignParentBottom="true"
             android:visibility="gone"
-            app:backgroundTint="#E3E3E3"
+            app:backgroundTint="@color/grey"
             app:itemIconSize="20dp"
             app:itemIconTint="#535353"
             app:itemTextColor="#535353"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_option_menu" />
+
+        <RelativeLayout
+            android:id="@+id/bottom_action_menu"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true"
+            android:background="@color/egg_yellow">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_left_screen">
+
+                <ImageView
+                    android:id="@+id/chosen_item_icon"
+                    android:layout_width="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_file" />
+                <TextView
+                    android:id="@+id/chosen_item_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@+id/chosen_item_icon"
+                    android:text="1 item"
+                    android:textSize="10dp" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/bottom_action_cancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/bottom_action_copy"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                android:textColor="#b47a19" />
+
+            <Button
+                android:id="@+id/bottom_action_copy"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:text="@string/copy_here"
+                android:textAllCaps="false"
+                android:textColor="#b47a19" />
+        </RelativeLayout>
     </RelativeLayout>
 </layout>

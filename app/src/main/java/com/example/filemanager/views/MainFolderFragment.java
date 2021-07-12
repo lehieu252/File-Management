@@ -1,9 +1,9 @@
 package com.example.filemanager.views;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.FileUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,16 +20,13 @@ import com.example.filemanager.data.TempSharedPreference;
 import com.example.filemanager.databinding.FragmentMainFolderBinding;
 import com.example.filemanager.helpers.FileUtil;
 import com.example.filemanager.models.CommonFile;
+import com.example.filemanager.services.CopyServiceThread;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class MainFolderFragment extends Fragment {
@@ -39,6 +36,7 @@ public class MainFolderFragment extends Fragment {
     FileAdapter fileAdapter;
     TempSharedPreference tempSharedPreference;
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,7 +49,7 @@ public class MainFolderFragment extends Fragment {
             if (root.listFiles().length > 0) {
                 binding.folderRecyclerview.setVisibility(View.VISIBLE);
                 binding.txtNoFiles.setVisibility(View.GONE);
-                FileUtil.getListFile(root,fileList);
+                FileUtil.getListFile(root, fileList);
             }
         }
         fileAdapter = new FileAdapter(fileList, 1);
@@ -68,6 +66,7 @@ public class MainFolderFragment extends Fragment {
             public void onItemLongClick(View view, CommonFile file, int pos) {
                 toggleSelection(pos);
                 binding.bottomOptionMenu.setVisibility(View.VISIBLE);
+                binding.bottomActionMenu.setVisibility(View.GONE);
             }
         });
         binding.bottomOptionMenu.setOnNavigationItemSelectedListener(item -> {
@@ -78,30 +77,72 @@ public class MainFolderFragment extends Fragment {
                 }
                 case R.id.copy: {
                     Toast.makeText(getContext(), "Copy", Toast.LENGTH_SHORT).show();
-                    Log.d("SelectedFile",fileAdapter.getSelectedItems().toString());
+                    Log.d("SelectedFile", fileAdapter.getSelectedItems().toString());
                     List<CommonFile> copyList = new ArrayList<>();
-                    for(int i=0;i<fileAdapter.getSelectedItems().size();i++){
+                    for (int i = 0; i < fileAdapter.getSelectedItems().size(); i++) {
                         copyList.add(fileList.get(fileAdapter.getSelectedItems().get(i)));
                     }
                     tempSharedPreference.savePathList(copyList);
-                    fileAdapter.clearAllSelection();
-                    binding.bottomOptionMenu.setVisibility(View.GONE);
-                    Log.d("copied",tempSharedPreference.getPathList().toString());
+                    fileAdapter.backToOrigin();
+                    if (tempSharedPreference.getPathList() != null) {
+                        Log.d("copied", tempSharedPreference.getPathList().toString());
+                        binding.chosenItemCount.setText(tempSharedPreference.getPathList().size() + " items");
+                        binding.bottomOptionMenu.setVisibility(View.GONE);
+                        binding.bottomActionMenu.setVisibility(View.VISIBLE);
+                    }
                     return true;
                 }
                 case R.id.delete: {
                     Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
+                    Log.d("Selected", fileAdapter.getSelectedItems().toString());
+                    deleteSelection();
+                    fileAdapter.deleteSelection(FileUtil.getListFile(root, fileList));
+                    binding.bottomOptionMenu.setVisibility(View.GONE);
+                    binding.bottomActionMenu.setVisibility(View.GONE);
                     return true;
                 }
                 case R.id.cancel: {
                     Toast.makeText(getContext(), "Cancel", Toast.LENGTH_SHORT).show();
-                    fileAdapter.clearAllSelection();
+                    fileAdapter.backToOrigin();
                     binding.bottomOptionMenu.setVisibility(View.GONE);
+                    binding.bottomActionMenu.setVisibility(View.GONE);
                     return true;
                 }
                 default:
                     return false;
             }
+        });
+
+        if (tempSharedPreference.getPathList() != null) {
+            Log.d("copied", tempSharedPreference.getPathList().toString());
+            binding.chosenItemCount.setText(tempSharedPreference.getPathList().size() + " items");
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.VISIBLE);
+        }
+
+        binding.bottomActionCancel.setOnClickListener(v -> {
+            tempSharedPreference.clearPathList();
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.GONE);
+        });
+
+        binding.bottomActionCopy.setOnClickListener(v -> {
+            ExecutorService executor = Executors.newFixedThreadPool(5);
+            List<String> listCopy = tempSharedPreference.getPathList();
+            for (String file : listCopy) {
+                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath());
+                executor.execute(worker);
+            }
+            executor.shutdown();
+            while(!executor.isTerminated()){
+                Log.d("Thread", "Running");
+            }
+            fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
+            binding.folderRecyclerview.setVisibility(View.VISIBLE);
+            binding.txtNoFiles.setVisibility(View.GONE);
+            tempSharedPreference.clearPathList();
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.GONE);
         });
 
         return binding.getRoot();
@@ -112,9 +153,8 @@ public class MainFolderFragment extends Fragment {
     }
 
     private void deleteSelection() {
-        List<Integer> selectedItemPos = fileAdapter.getSelectedItems();
-        for (int i = selectedItemPos.size() - 1; i >= 0; i--) {
-            fileAdapter.removeItems(selectedItemPos.get(i));
+        for (int i = 0; i < fileAdapter.getSelectedItems().size(); i++) {
+            FileUtil.deleteFile(new File(fileList.get(fileAdapter.getSelectedItems().get(i)).getFile().getPath()));
         }
     }
 

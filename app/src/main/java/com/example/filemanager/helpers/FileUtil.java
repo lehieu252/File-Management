@@ -18,18 +18,16 @@ public class FileUtil {
             File dst = new File(dstDir, src.getName());
 
             if (src.isDirectory()) {
-
                 String files[] = src.list();
                 int filesLength = files.length;
                 for (int i = 0; i < filesLength; i++) {
                     String src1 = (new File(src, files[i]).getPath());
                     String dst1 = dst.getPath();
                     copyFileOrDirectory(src1, dst1);
-
                 }
-            } else {
-                copyFile(src, dst);
             }
+            copyFile(src, dst);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,7 +58,16 @@ public class FileUtil {
         }
     }
 
-    public static void getListFile(File root, List<CommonFile> fileList) {
+    public static void deleteFile(File file) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                deleteFile(child);
+            }
+        }
+        file.delete();
+    }
+
+    public static List<CommonFile> getListFile(File root, List<CommonFile> fileList) {
         File[] files = root.listFiles();
         fileList.clear();
         for (File file : files) {
@@ -68,5 +75,6 @@ public class FileUtil {
             Log.d("File", file.getAbsolutePath());
             fileList.add(f);
         }
+        return fileList;
     }
 }

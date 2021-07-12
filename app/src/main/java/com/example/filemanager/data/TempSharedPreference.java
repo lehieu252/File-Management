@@ -35,6 +35,7 @@ public class TempSharedPreference {
     public List<String> getPathList() {
         Gson gson = new Gson();
         String jsonText = sharedPreference.getString("path_list", null);
+        if(jsonText == null) return null;
         String[] listPath = gson.fromJson(jsonText, String[].class);
         return Arrays.asList(listPath);
     }

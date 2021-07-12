@@ -48,6 +48,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
         this.selectedItems = new SparseBooleanArray();
     }
 
+
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -199,7 +201,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     }
 
 
-    public void clearAllSelection() {
+    public void backToOrigin() {
         selectedItems.clear();
         files.clear();
         files.addAll(tmpFiles);
@@ -207,6 +209,22 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
         selectedIndex = -1;
         Log.d("List File", files.toString());
         Log.d("List File", tmpFiles.toString());
+        this.notifyDataSetChanged();
+    }
+
+    public void deleteSelection(List<CommonFile> files) {
+        selectedItems.clear();
+        this.files = files;
+        isSelectionMode = false;
+        selectedIndex = -1;
+        this.notifyDataSetChanged();
+    }
+
+    public void updateNew(List<CommonFile> files) {
+        selectedItems.clear();
+        this.files = files;
+        isSelectionMode = false;
+        selectedIndex = -1;
         this.notifyDataSetChanged();
     }
 
