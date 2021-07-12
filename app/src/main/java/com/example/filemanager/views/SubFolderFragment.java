@@ -32,7 +32,6 @@ public class SubFolderFragment extends Fragment {
     private FileAdapter fileAdapter;
     File root;
     TempSharedPreference tempSharedPreference;
-    private int mode;       // 1 : Copy, 2: Move
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -88,7 +87,7 @@ public class SubFolderFragment extends Fragment {
                         binding.bottomActionMove.setVisibility(View.VISIBLE);
                         binding.bottomActionCopy.setVisibility(View.INVISIBLE);
                     }
-                    mode = 2;
+                    tempSharedPreference.saveMode(2);
                     return true;
                 }
                 case R.id.copy: {
@@ -105,7 +104,7 @@ public class SubFolderFragment extends Fragment {
                         binding.bottomOptionMenu.setVisibility(View.GONE);
                         binding.bottomActionMenu.setVisibility(View.VISIBLE);
                     }
-                    mode = 1;
+                    tempSharedPreference.saveMode(1);
                     return true;
                 }
                 case R.id.delete: {
@@ -134,12 +133,13 @@ public class SubFolderFragment extends Fragment {
             binding.chosenItemCount.setText(tempSharedPreference.getPathList().size() + " items");
             binding.bottomOptionMenu.setVisibility(View.GONE);
             binding.bottomActionMenu.setVisibility(View.VISIBLE);
-            if (mode == 1) {
-                binding.bottomActionMove.setVisibility(View.INVISIBLE);
-                binding.bottomActionCopy.setVisibility(View.VISIBLE);
-            } else {
+            if (tempSharedPreference.getMode() == 2) {
                 binding.bottomActionMove.setVisibility(View.VISIBLE);
                 binding.bottomActionCopy.setVisibility(View.INVISIBLE);
+            }
+            if (tempSharedPreference.getMode() == 1) {
+                binding.bottomActionMove.setVisibility(View.INVISIBLE);
+                binding.bottomActionCopy.setVisibility(View.VISIBLE);
             }
         }
 

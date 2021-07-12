@@ -35,7 +35,7 @@ public class MainFolderFragment extends Fragment {
     private List<CommonFile> fileList = new ArrayList<CommonFile>();
     private FileAdapter fileAdapter;
     TempSharedPreference tempSharedPreference;
-    private int mode;       // 1 : Copy, 2: Move
+
     @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -88,7 +88,7 @@ public class MainFolderFragment extends Fragment {
                         binding.bottomActionMove.setVisibility(View.VISIBLE);
                         binding.bottomActionCopy.setVisibility(View.INVISIBLE);
                     }
-                    mode = 2;
+                    tempSharedPreference.saveMode(2);
                     return true;
                 }
                 case R.id.copy: {
@@ -106,7 +106,7 @@ public class MainFolderFragment extends Fragment {
                         binding.bottomOptionMenu.setVisibility(View.GONE);
                         binding.bottomActionMenu.setVisibility(View.VISIBLE);
                     }
-                    mode = 1;
+                    tempSharedPreference.saveMode(1);
                     return true;
                 }
                 case R.id.delete: {
@@ -135,12 +135,13 @@ public class MainFolderFragment extends Fragment {
             binding.chosenItemCount.setText(tempSharedPreference.getPathList().size() + " items");
             binding.bottomOptionMenu.setVisibility(View.GONE);
             binding.bottomActionMenu.setVisibility(View.VISIBLE);
-            if (mode == 1) {
-                binding.bottomActionMove.setVisibility(View.INVISIBLE);
-                binding.bottomActionCopy.setVisibility(View.VISIBLE);
-            } else {
+            if (tempSharedPreference.getMode() == 2) {
                 binding.bottomActionMove.setVisibility(View.VISIBLE);
                 binding.bottomActionCopy.setVisibility(View.INVISIBLE);
+            }
+            if (tempSharedPreference.getMode() == 1) {
+                binding.bottomActionMove.setVisibility(View.INVISIBLE);
+                binding.bottomActionCopy.setVisibility(View.VISIBLE);
             }
         }
 
@@ -154,11 +155,11 @@ public class MainFolderFragment extends Fragment {
             ExecutorService executor = Executors.newFixedThreadPool(5);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
-                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(),CopyServiceThread.COPY);
+                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(), CopyServiceThread.COPY);
                 executor.execute(worker);
             }
             executor.shutdown();
-            while(!executor.isTerminated()){
+            while (!executor.isTerminated()) {
                 Log.d("Thread", "Running");
             }
             fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
@@ -173,7 +174,7 @@ public class MainFolderFragment extends Fragment {
             ExecutorService executor = Executors.newFixedThreadPool(5);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
-                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(),CopyServiceThread.MOVE);
+                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(), CopyServiceThread.MOVE);
                 executor.execute(worker);
             }
             executor.shutdown();

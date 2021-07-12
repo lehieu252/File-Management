@@ -43,4 +43,13 @@ public class TempSharedPreference {
     public void clearPathList() {
         editor.clear().apply();
     }
+
+    public void saveMode(int mode){
+        editor.putInt("ACTION_MODE",mode);
+        editor.apply();
+    }
+
+    public int getMode(){
+        return sharedPreference.getInt("ACTION_MODE",1);
+    }
 }
