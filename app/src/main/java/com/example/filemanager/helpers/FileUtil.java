@@ -67,6 +67,12 @@ public class FileUtil {
         file.delete();
     }
 
+    public static void moveFile(String srcDir, String dstDir){
+        copyFileOrDirectory(srcDir,dstDir);
+        File src = new File(srcDir);
+        deleteFile(src);
+    }
+
     public static List<CommonFile> getListFile(File root, List<CommonFile> fileList) {
         File[] files = root.listFiles();
         fileList.clear();

@@ -109,8 +109,22 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="15dp"
+                android:visibility="visible"
                 android:text="@string/copy_here"
                 android:textAllCaps="false"
+                android:textColor="#b47a19" />
+
+            <Button
+                android:id="@+id/bottom_action_move"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:text="@string/move_here"
+                android:textAllCaps="false"
+                android:visibility="invisible"
                 android:textColor="#b47a19" />
         </RelativeLayout>
     </RelativeLayout>

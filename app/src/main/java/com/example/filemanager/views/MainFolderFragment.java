@@ -31,11 +31,11 @@ import java.util.concurrent.Executors;
 
 public class MainFolderFragment extends Fragment {
 
-    FragmentMainFolderBinding binding;
+    private FragmentMainFolderBinding binding;
     private List<CommonFile> fileList = new ArrayList<CommonFile>();
-    FileAdapter fileAdapter;
+    private FileAdapter fileAdapter;
     TempSharedPreference tempSharedPreference;
-
+    private int mode;       // 1 : Copy, 2: Move
     @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -73,6 +73,22 @@ public class MainFolderFragment extends Fragment {
             switch (item.getItemId()) {
                 case R.id.move: {
                     Toast.makeText(getContext(), "Move", Toast.LENGTH_SHORT).show();
+                    Log.d("SelectedFile", fileAdapter.getSelectedItems().toString());
+                    List<CommonFile> copyList = new ArrayList<>();
+                    for (int i = 0; i < fileAdapter.getSelectedItems().size(); i++) {
+                        copyList.add(fileList.get(fileAdapter.getSelectedItems().get(i)));
+                    }
+                    tempSharedPreference.savePathList(copyList);
+                    fileAdapter.backToOrigin();
+                    if (tempSharedPreference.getPathList() != null) {
+                        Log.d("copied", tempSharedPreference.getPathList().toString());
+                        binding.chosenItemCount.setText(tempSharedPreference.getPathList().size() + " items");
+                        binding.bottomOptionMenu.setVisibility(View.GONE);
+                        binding.bottomActionMenu.setVisibility(View.VISIBLE);
+                        binding.bottomActionMove.setVisibility(View.VISIBLE);
+                        binding.bottomActionCopy.setVisibility(View.INVISIBLE);
+                    }
+                    mode = 2;
                     return true;
                 }
                 case R.id.copy: {
@@ -90,6 +106,7 @@ public class MainFolderFragment extends Fragment {
                         binding.bottomOptionMenu.setVisibility(View.GONE);
                         binding.bottomActionMenu.setVisibility(View.VISIBLE);
                     }
+                    mode = 1;
                     return true;
                 }
                 case R.id.delete: {
@@ -118,6 +135,13 @@ public class MainFolderFragment extends Fragment {
             binding.chosenItemCount.setText(tempSharedPreference.getPathList().size() + " items");
             binding.bottomOptionMenu.setVisibility(View.GONE);
             binding.bottomActionMenu.setVisibility(View.VISIBLE);
+            if (mode == 1) {
+                binding.bottomActionMove.setVisibility(View.INVISIBLE);
+                binding.bottomActionCopy.setVisibility(View.VISIBLE);
+            } else {
+                binding.bottomActionMove.setVisibility(View.VISIBLE);
+                binding.bottomActionCopy.setVisibility(View.INVISIBLE);
+            }
         }
 
         binding.bottomActionCancel.setOnClickListener(v -> {
@@ -130,11 +154,30 @@ public class MainFolderFragment extends Fragment {
             ExecutorService executor = Executors.newFixedThreadPool(5);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
-                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath());
+                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(),CopyServiceThread.COPY);
                 executor.execute(worker);
             }
             executor.shutdown();
             while(!executor.isTerminated()){
+                Log.d("Thread", "Running");
+            }
+            fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
+            binding.folderRecyclerview.setVisibility(View.VISIBLE);
+            binding.txtNoFiles.setVisibility(View.GONE);
+            tempSharedPreference.clearPathList();
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.GONE);
+        });
+
+        binding.bottomActionMove.setOnClickListener(v -> {
+            ExecutorService executor = Executors.newFixedThreadPool(5);
+            List<String> listCopy = tempSharedPreference.getPathList();
+            for (String file : listCopy) {
+                Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(),CopyServiceThread.MOVE);
+                executor.execute(worker);
+            }
+            executor.shutdown();
+            while (!executor.isTerminated()) {
                 Log.d("Thread", "Running");
             }
             fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
