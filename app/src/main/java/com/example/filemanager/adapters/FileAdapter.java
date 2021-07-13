@@ -195,12 +195,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     }
 
 
-    public void removeItems(int position) {
-        files.remove(position);
-        selectedIndex = -1;
-    }
-
-
     public void backToOrigin() {
         selectedItems.clear();
         files.clear();
@@ -215,6 +209,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     public void deleteSelection(List<CommonFile> files) {
         selectedItems.clear();
         this.files = files;
+        tmpFiles.clear();
+        tmpFiles.addAll(files);
         isSelectionMode = false;
         selectedIndex = -1;
         this.notifyDataSetChanged();
@@ -223,6 +219,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
     public void updateNew(List<CommonFile> files) {
         selectedItems.clear();
         this.files = files;
+        tmpFiles.clear();
+        tmpFiles.addAll(files);
         isSelectionMode = false;
         selectedIndex = -1;
         this.notifyDataSetChanged();
@@ -240,6 +238,22 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
 
     public int selectedItemCount() {
         return selectedItems.size();
+    }
+
+    public void filter(String text){
+        files.clear();
+        if(text.isEmpty()){
+            files.addAll(tmpFiles);
+        }
+        else {
+            text = text.toLowerCase();
+            for(CommonFile file : tmpFiles ){
+                if(file.getName().toLowerCase().contains(text)){
+                    files.add(file);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView fName;
