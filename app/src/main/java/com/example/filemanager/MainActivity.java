@@ -24,13 +24,11 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         int MyVersion = Build.VERSION.SDK_INT;
         if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (!checkIfAlreadyHavePermission()) {
-                requestForSpecificPermission();
-            }
+//            if (!checkIfAlreadyHavePermission()) {
+//                requestForSpecificPermission();
+//            }
             if (!Environment.isExternalStorageManager()){
                 Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                 Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -38,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
     }
 
 

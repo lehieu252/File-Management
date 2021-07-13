@@ -151,6 +151,10 @@ public class SubFolderFragment extends Fragment {
         });
 
         binding.bottomActionCopy.setOnClickListener(v -> {
+            binding.folderRecyclerview.setVisibility(View.VISIBLE);
+            binding.txtNoFiles.setVisibility(View.GONE);
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.GONE);
             ExecutorService executor = Executors.newFixedThreadPool(5);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
@@ -162,14 +166,14 @@ public class SubFolderFragment extends Fragment {
                 Log.d("Thread", "Running");
             }
             fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
-            binding.folderRecyclerview.setVisibility(View.VISIBLE);
-            binding.txtNoFiles.setVisibility(View.GONE);
             tempSharedPreference.clearPathList();
-            binding.bottomOptionMenu.setVisibility(View.GONE);
-            binding.bottomActionMenu.setVisibility(View.GONE);
         });
 
         binding.bottomActionMove.setOnClickListener(v -> {
+            binding.folderRecyclerview.setVisibility(View.VISIBLE);
+            binding.txtNoFiles.setVisibility(View.GONE);
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.GONE);
             ExecutorService executor = Executors.newFixedThreadPool(5);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
@@ -181,11 +185,7 @@ public class SubFolderFragment extends Fragment {
                 Log.d("Thread", "Running");
             }
             fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
-            binding.folderRecyclerview.setVisibility(View.VISIBLE);
-            binding.txtNoFiles.setVisibility(View.GONE);
             tempSharedPreference.clearPathList();
-            binding.bottomOptionMenu.setVisibility(View.GONE);
-            binding.bottomActionMenu.setVisibility(View.GONE);
         });
 
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

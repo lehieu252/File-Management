@@ -35,6 +35,7 @@ public class MainFolderFragment extends Fragment {
     private FragmentMainFolderBinding binding;
     private List<CommonFile> fileList = new ArrayList<CommonFile>();
     private FileAdapter fileAdapter;
+    private File root;
     TempSharedPreference tempSharedPreference;
 
     @SuppressLint("SetTextI18n")
@@ -45,7 +46,7 @@ public class MainFolderFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_folder, container, false);
         tempSharedPreference = new TempSharedPreference(getContext());
-        File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+        root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
         if (root.listFiles() != null) {
             if (root.listFiles().length > 0) {
                 binding.folderRecyclerview.setVisibility(View.VISIBLE);
@@ -153,6 +154,10 @@ public class MainFolderFragment extends Fragment {
         });
 
         binding.bottomActionCopy.setOnClickListener(v -> {
+            binding.folderRecyclerview.setVisibility(View.VISIBLE);
+            binding.txtNoFiles.setVisibility(View.GONE);
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.GONE);
             ExecutorService executor = Executors.newFixedThreadPool(5);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
@@ -164,14 +169,14 @@ public class MainFolderFragment extends Fragment {
                 Log.d("Thread", "Running");
             }
             fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
-            binding.folderRecyclerview.setVisibility(View.VISIBLE);
-            binding.txtNoFiles.setVisibility(View.GONE);
             tempSharedPreference.clearPathList();
-            binding.bottomOptionMenu.setVisibility(View.GONE);
-            binding.bottomActionMenu.setVisibility(View.GONE);
         });
 
         binding.bottomActionMove.setOnClickListener(v -> {
+            binding.folderRecyclerview.setVisibility(View.VISIBLE);
+            binding.txtNoFiles.setVisibility(View.GONE);
+            binding.bottomOptionMenu.setVisibility(View.GONE);
+            binding.bottomActionMenu.setVisibility(View.GONE);
             ExecutorService executor = Executors.newFixedThreadPool(5);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
@@ -183,11 +188,7 @@ public class MainFolderFragment extends Fragment {
                 Log.d("Thread", "Running");
             }
             fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
-            binding.folderRecyclerview.setVisibility(View.VISIBLE);
-            binding.txtNoFiles.setVisibility(View.GONE);
             tempSharedPreference.clearPathList();
-            binding.bottomOptionMenu.setVisibility(View.GONE);
-            binding.bottomActionMenu.setVisibility(View.GONE);
         });
 
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -216,4 +217,9 @@ public class MainFolderFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        fileAdapter.updateNew(FileUtil.getListFile(root,fileList));
+    }
 }
