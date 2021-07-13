@@ -59,7 +59,7 @@ public class MainFolderFragment extends Fragment {
         fileAdapter.setItemClick(new FileAdapter.OnItemClick() {
             @Override
             public void onItemClick(View view, CommonFile file, int pos) {
-                if (fileAdapter.selectedItemCount() > 0) {
+                if (fileAdapter.isSelectionMode) {
                     toggleSelection(pos);
                 }
             }

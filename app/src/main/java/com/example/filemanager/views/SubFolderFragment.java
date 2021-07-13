@@ -55,10 +55,12 @@ public class SubFolderFragment extends Fragment {
         }
         fileAdapter = new FileAdapter(fileList, 2);
         binding.folderRecyclerview.setAdapter(fileAdapter);
+        binding.bottomOptionMenu.setVisibility(View.GONE);
+        binding.bottomActionMenu.setVisibility(View.GONE);
         fileAdapter.setItemClick(new FileAdapter.OnItemClick() {
             @Override
             public void onItemClick(View view, CommonFile file, int pos) {
-                if (fileAdapter.selectedItemCount() > 0) {
+                if (fileAdapter.isSelectionMode) {
                     toggleSelection(pos);
                 }
             }
@@ -214,4 +216,5 @@ public class SubFolderFragment extends Fragment {
             FileUtil.deleteFile(new File(fileList.get(fileAdapter.getSelectedItems().get(i)).getFile().getPath()));
         }
     }
+
 }
