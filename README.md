@@ -10,6 +10,7 @@ File Management is [Samsung My Files](https://play.google.com/store/apps/details
 - Show all files in Android internal storage
 - Search for specific files or folders
 - Copy, move, delete files or folders
+- Open files (photo, video, document)
 
 
 ## Contributor
