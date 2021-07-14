@@ -1,7 +1,7 @@
 package com.example.filemanager.views;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -26,6 +26,7 @@ import com.example.filemanager.services.CopyServiceThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,12 +40,14 @@ public class MainFolderFragment extends Fragment {
     TempSharedPreference tempSharedPreference;
 
     @SuppressLint("SetTextI18n")
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d("Fragment_Life","onCreateView");
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_folder, container, false);
+
         tempSharedPreference = new TempSharedPreference(getContext());
         root = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
         if (root.listFiles() != null) {
@@ -56,6 +59,13 @@ public class MainFolderFragment extends Fragment {
         }
         fileAdapter = new FileAdapter(fileList, 1);
         binding.folderRecyclerview.setAdapter(fileAdapter);
+
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            binding.swipeRefreshLayout.setRefreshing(false);
+            fileAdapter.notifyDataSetChanged();
+            Log.d("Root", String.valueOf(Objects.requireNonNull(root.listFiles()).length));
+        });
+
         fileAdapter.setItemClick(new FileAdapter.OnItemClick() {
             @Override
             public void onItemClick(View view, CommonFile file, int pos) {
@@ -218,8 +228,16 @@ public class MainFolderFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        fileAdapter.updateNew(FileUtil.getListFile(root,fileList));
+    public void onResume() {
+        super.onResume();
+        if (root.listFiles() != null) {
+            if (root.listFiles().length > 0) {
+                fileAdapter.updateNew(FileUtil.getListFile(root, fileList));
+                binding.folderRecyclerview.setVisibility(View.VISIBLE);
+                binding.txtNoFiles.setVisibility(View.GONE);
+            }
+        }
+        Log.d("Fragment_Life","onResume");
     }
+
 }

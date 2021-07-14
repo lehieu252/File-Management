@@ -23,6 +23,7 @@ import com.example.filemanager.services.CopyServiceThread;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,8 +58,16 @@ public class SubFolderFragment extends Fragment {
         }
         fileAdapter = new FileAdapter(fileList, 2);
         binding.folderRecyclerview.setAdapter(fileAdapter);
+
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            binding.swipeRefreshLayout.setRefreshing(false);
+            fileAdapter.notifyDataSetChanged();
+            Log.d("Root", String.valueOf(Objects.requireNonNull(root.listFiles()).length));
+        });
+
         binding.bottomOptionMenu.setVisibility(View.GONE);
         binding.bottomActionMenu.setVisibility(View.GONE);
+
         fileAdapter.setItemClick(new FileAdapter.OnItemClick() {
             @Override
             public void onItemClick(View view, CommonFile file, int pos) {

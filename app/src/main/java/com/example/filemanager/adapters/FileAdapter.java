@@ -79,7 +79,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.ViewHolder> {
                 holder.fItemCount.setVisibility(View.VISIBLE);
                 holder.fSize.setVisibility(View.GONE);
                 holder.fItemCount.setText(data.getItemCount() + " items");
-            } else {
+            } else if(data.getFile().isFile()) {
                 holder.folderIcon.setVisibility(View.GONE);
                 holder.fileIcon.setVisibility(View.VISIBLE);
                 holder.fItemCount.setVisibility(View.GONE);

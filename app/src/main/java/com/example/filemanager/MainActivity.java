@@ -1,12 +1,5 @@
 package com.example.filemanager;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,58 +10,84 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 public class MainActivity extends AppCompatActivity {
+    private static final String LOG_TAG = "Activity_Life";
 
-    private static final String TAG = "Permission";
-
-    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        int MyVersion = Build.VERSION.SDK_INT;
-        if (MyVersion > Build.VERSION_CODES.LOLLIPOP_MR1) {
-//            if (!checkIfAlreadyHavePermission()) {
-//                requestForSpecificPermission();
-//            }
-            if (!Environment.isExternalStorageManager()){
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                startActivity(intent);
-            }
-        }
+        Log.d(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    private boolean checkIfAlreadyHavePermission() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE);
-        int result2 = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        return (result + result2) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    private void requestForSpecificPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+        int MyVersion = Build.VERSION.SDK_INT;
+        if (MyVersion > Build.VERSION_CODES.LOLLIPOP) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
+            }
+            if (MyVersion == Build.VERSION_CODES.R) {
+                if (!Environment.isExternalStorageManager()) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                }
+            }
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 101) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Permission Read", "Granted");
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permission", "Granted");
             } else {
-                Log.d("Permission Read", "Denied");
+                Log.d("Permission", "Denied");
             }
-            if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Permission Write", "Granted");
-            } else {
-                Log.d("Permission Write", "Denied");
-            }
-
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(LOG_TAG, "onStart");
+
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(LOG_TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(LOG_TAG, "onRestart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy");
     }
 }
