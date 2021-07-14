@@ -177,7 +177,7 @@ public class MainFolderFragment extends Fragment {
             binding.txtNoFiles.setVisibility(View.GONE);
             binding.bottomOptionMenu.setVisibility(View.GONE);
             binding.bottomActionMenu.setVisibility(View.GONE);
-            ExecutorService executor = Executors.newFixedThreadPool(5);
+            ExecutorService executor = Executors.newFixedThreadPool(20);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
                 Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(), CopyServiceThread.MOVE);

@@ -31,6 +31,7 @@ public class SubFolderFragment extends Fragment {
     private FragmentSubFolderBinding binding;
     private List<CommonFile> fileList = new ArrayList<CommonFile>();
     private FileAdapter fileAdapter;
+    private LoadingDialog loadingDialog;
     File root;
     TempSharedPreference tempSharedPreference;
 
@@ -41,6 +42,7 @@ public class SubFolderFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sub_folder, container, false);
         tempSharedPreference = new TempSharedPreference(getContext());
+        loadingDialog = new LoadingDialog(getActivity());
         Bundle bundle = getArguments();
         CommonFile folder = (CommonFile) bundle.getSerializable("Folder");
         root = new File(folder.getFile().getPath());
@@ -176,7 +178,7 @@ public class SubFolderFragment extends Fragment {
             binding.txtNoFiles.setVisibility(View.GONE);
             binding.bottomOptionMenu.setVisibility(View.GONE);
             binding.bottomActionMenu.setVisibility(View.GONE);
-            ExecutorService executor = Executors.newFixedThreadPool(5);
+            ExecutorService executor = Executors.newFixedThreadPool(20);
             List<String> listCopy = tempSharedPreference.getPathList();
             for (String file : listCopy) {
                 Runnable worker = new CopyServiceThread(file, root.getAbsolutePath(), CopyServiceThread.MOVE);
