@@ -3,7 +3,7 @@
 File Management is [Samsung My Files](https://play.google.com/store/apps/details?id=com.sec.android.app.myfiles&hl=vi&gl=US) Android clone application.
 
 ## Installation
-- Download app : [File Management.apk](https://github.com/lehieu252/File-Management/blob/main/file_manager.apk)
+- Download app : [File_Management.apk](https://github.com/lehieu252/File-Management/blob/main/file_management.apk)
 - Install app and allow access all files permission
 
 ## Functions
